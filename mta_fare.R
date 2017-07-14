@@ -11,7 +11,7 @@ dim(df)
 
 
 #----------------------------------------------------------------
-#mta_station = read.csv('mta_station.csv', stringsAsFactors = F)
+mta_station = read.csv('mta_station.csv', stringsAsFactors = F)
 #df2 = mta_station
 
 
