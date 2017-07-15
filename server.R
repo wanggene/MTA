@@ -4,6 +4,7 @@ library(ggplot2)
 library(dplyr)
 library(dygraphs)
 library(googleVis)
+
 function(input, output) {
     
 ################################ Reactive ##################################
@@ -22,7 +23,7 @@ function(input, output) {
     
     ################--------------ggv1_mean : average swipe count in each time period 
     g_mean = reactive({   
-        df %>% 
+        df %>% #filter(!year %in% c(2010, 2017)) %>% 
             group_by_(input$period) %>% 
             dplyr::summarise(swipe_count = mean(fare_swipe))
         
@@ -38,11 +39,12 @@ function(input, output) {
                         xvar = input$period, 
                         yvar = 'swipe_count', 
                         options=list(
-                            
-                            lineWidth=2, pointSize=0,
+                            height= 350,
+                            legend='none',
                             title="Total Swipe Number", 
-                            vAxis="{title:'Count'}" ) ) # ,
-                            #hAxis="{title:'height (in)'}"))
+                            vAxis="{title:'Count'}"
+                            #hAxis="{title:'height (in)'}"
+                            ))
         
     }) 
     
@@ -52,12 +54,12 @@ function(input, output) {
                         xvar = input$period, 
                         yvar = 'swipe_count', 
                         options=list(
-                            
-                            lineWidth=2, pointSize=0,
-                            title="Average Swipe Number", 
-                            vAxis="{title:'Count'}"))       #,
-                            ##hAxis="{title:'height (in)'}"))
-        
+                            height= 350,
+                            legend='none',
+                            title="Total Swipe Number", 
+                            vAxis="{title:'Count'}"
+                            #hAxis="{title:'height (in)'}"
+                        ))
     })  
     
 
@@ -81,8 +83,8 @@ function(input, output) {
                         xvar = input$period, 
                         yvar = 'swipe_count', 
                         options=list(
-                            
-                            lineWidth=2, pointSize=0,
+                            height= 350,
+                            legend='none',
                             title="Total Swipe Number", 
                             vAxis="{title:'Count'}" ) ) # ,
         #hAxis="{title:'height (in)'}"))
@@ -95,7 +97,7 @@ function(input, output) {
     #      only count the sum of fare swipe  ---------------
     
     g_sum_type_station = reactive({  
-        df %>% 
+        df %>% filter(!year %in% c(2010, 2017)) %>% 
             filter(fare_type == input$fare_type) %>%
             filter(Station == input$station) %>% 
             group_by_(input$period) %>%
@@ -113,8 +115,8 @@ function(input, output) {
                         xvar = input$period, 
                         yvar = 'swipe_count', 
                         options=list(
-                            
-                            lineWidth=2, pointSize=0,
+                            height= 350,
+                            legend='none',
                             title="Total Swipe Number", 
                             vAxis="{title:'Count'}" ) ) # ,
         #hAxis="{title:'height (in)'}"))
@@ -133,8 +135,8 @@ function(input, output) {
     g_timeline = reactive({
         df %>%  
             filter(fare_type == input$fare_type) %>%
-            group_by(To.Date) %>% 
             filter(Station == input$station) %>%
+            group_by(To.Date) %>% 
             dplyr::summarise(swipe_count = sum(fare_swipe))
         
     })
@@ -146,15 +148,19 @@ function(input, output) {
         gvisAnnotationChart(g_timeline(),
                             datevar="To.Date",
                             numvar="swipe_count",
+                            
                             options=list(
-                                width='95%', height= 500))
+                                #width = 10,
+                                #height= 500,
+                                width='95%', height=500)
+                            )
         
     }) 
     
     
     
     
-#####================================================================
+#####================================================================ old code
 #   
 #     output$ggv2 = renderGvis({
 #         gvisColumnChart(g2(), 
@@ -169,9 +175,6 @@ function(input, output) {
 #         
 #     }) 
 #     
-#         
-#     
-#     
 # # show histogram using googleVis: ggv1
 #     
 #     output$ggv1 = renderGvis({
@@ -183,8 +186,6 @@ function(input, output) {
 #                           width='95%', height=500))
 # 
 #     })
-#    
-#     
 
 
 

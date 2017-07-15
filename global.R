@@ -10,15 +10,15 @@ library(googleVis)
 load('mta2010_gathered.Rda')
 df = df1 %>% filter(To.Date > '2010-06-10')
 
-# remove row names
+
 
 # create variable with colnames as choice
-# station = unique(df1$fare_type)
-
-# create variabel for time period
+# fare type
 fare_type = unique(df$fare_type)
 
-period = list("year", "month", "week")
+# time period
+period = list("year", "month")
 
+# station name
 station = unique(df$Station)
 
