@@ -12,7 +12,7 @@ dim(df)
 
 #----------------------------------------------------------------
 mta_station = read.csv('mta_station.csv', stringsAsFactors = F)
-#df2 = mta_station
+df_st = mta_station
 
 
 ##################################################################
@@ -160,7 +160,8 @@ g + geom_line(aes(color = year, group=year)) +
 # 
 
 
-
+df %>% filter(To.Date > '2010-06-10') %>% 
+    filter(!year %in% c(2010, 2017)) %>% filter(fare_type == 'Full.Fare')
 
 
 

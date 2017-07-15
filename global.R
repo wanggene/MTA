@@ -2,17 +2,23 @@ library(shiny)
 library(DT)
 library(dplyr)
 library(ggplot2)
+library(dygraphs)
 library(googleVis)
 
 # load mta data df1
 
 load('mta2010_gathered.Rda')
-df = df1
+df = df1 %>% filter(To.Date > '2010-06-10')
 
 # remove row names
 
 # create variable with colnames as choice
-#station = unique(df1$fare_type)
+# station = unique(df1$fare_type)
 
 # create variabel for time period
 fare_type = unique(df$fare_type)
+
+period = list("year", "month", "week")
+
+station = unique(df$Station)
+
