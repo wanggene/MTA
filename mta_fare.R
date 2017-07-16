@@ -72,47 +72,66 @@ df1 %>% group_by(Station, Remote.Station.ID) %>%
 
 #############################################################
 ######################    Look at the data    ###############
-#load('mta2010_gathered.Rda')
-load('mta2010_cleaned.Rda')
+load('mta2010_gathered.Rda')
+#load('mta2010_cleaned.Rda')
 head(df1)
 # Q1. what is the total full fare by year, month, week
 
+# don't count first week in dataset
+df = df1 %>% filter(To.Date > '2010-06-10')
+
 ## Total fare swipe by year
 
-g1 = df1 %>% filter(!year %in% c(2010, 2017)) %>%
+g = df %>% 
+    filter(!year %in% c(2010, 2017)) %>%
     group_by(year) %>% 
-    summarise(totalfullfare_ym = mean(fare_swipe)) %>% 
-    ggplot(aes(x=year, y = totalfullfare_ym))
+    summarise(swipe_count = sum(fare_swipe)) 
 
-g1 + geom_bar( stat='identity', show.legend = F)
-
-#g1 + geom_bar(aes(x=year, fill=year), stat='identity', show.legend = F)
+g1= ggplot(g, aes(x=year, y = swipe_count))
+#g1 + geom_bar( stat='identity', show.legend = F)
+g1 + geom_bar(aes(x=year, fill=year), stat='identity', show.legend = F)
 
 
 ## Total fare swipe by month
 
-g2 = df1 %>% filter(To.Date > '2010-06-10') %>%
+g = df %>% 
+    filter(!year %in% c(2010, 2017)) %>%
     group_by(month) %>% 
-    summarise(totalfullfare_ym = mean(fare_swipe)) %>% 
-    ggplot(aes(x=month, y = totalfullfare_ym))
+    summarise(swipe_count = sum(fare_swipe))  
+g2= ggplot(g, aes(x=month, y = swipe_count))
 
 g2 + geom_bar(aes(x=month, fill=month), stat='identity', show.legend = F)
 
 
+
 ## Total fare swipe by week
 
-g3 = df1 %>% filter(To.Date > '2010-06-10') %>%
+g = df %>% 
+    filter(!year %in% c(2010, 2017)) %>%
     group_by(week) %>% 
-    summarise(totalfullfare_ym = mean(fare_swipe)) %>% 
-    ggplot(aes(x=week, y = totalfullfare_ym))
-
+    summarise(swipe_count = sum(fare_swipe)) 
+    
+g3= ggplot(g, aes(x=week, y = swipe_count))
 g3 + geom_bar(aes(x=week), stat='identity', show.legend = F)
 
 
 
+## calculate the statistics: by year / month
+max(g$totalfullfare_ym)
+min(g$totalfullfare_ym)
+median(g$totalfullfare_ym)
+mean(g$totalfullfare_ym)
 
-## Total fare swipe by month
-g = df1 %>% filter(To.Date > '2010-06-10') %>%
+arrange(g, swipe_count)[1, 'year']
+
+arrange(g, desc(swipe_count))[ , c('year', 'swipe_count')]
+
+
+###########################################
+
+## Total fare swipe by month and year
+g = df %>% 
+    filter(!year %in% c(2010, 2017)) %>%
     group_by(year, month) %>% 
     summarise(totalfullfare_ym = sum(fare_swipe)) %>% 
     ggplot(aes(x=month, y = totalfullfare_ym))
@@ -122,8 +141,9 @@ g + geom_line(aes(x=month, group=year)) +
     theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
     theme(text = element_text(size=9))
 
-## Total fare swipe by week
-g = df1 %>% filter(To.Date > '2010-06-10') %>%
+## Total fare swipe by week and year
+g = df %>% 
+    filter(!year %in% c(2010, 2017)) %>%
     group_by(year, week) %>%
     summarise(totalfullfare_ym = sum(fare_swipe)) %>% 
     ggplot(aes(x = From.Date, y = totalfullfare_ym))
@@ -135,8 +155,7 @@ g + geom_line(aes(x=week, group=year)) +
     theme(text = element_text(size=9))
 
 # Q2. Total swipe by fare type and year
-
-g = df1 %>% group_by(year,fare_type) %>% 
+g = df %>% group_by(year,fare_type) %>% 
     summarise(totalfullfare_year = sum(fare_swipe)) %>%
     filter(year != 2017 & year != 2010) %>% 
     ggplot(aes(x=year, y = totalfullfare_year)) 
@@ -147,7 +166,7 @@ g + geom_point(aes(x=year)) +
 
 # Q3. what happed when MTA rise the fare,
 
-g = df1 %>% filter(year != 2017 & year != 2010) %>% 
+g = df %>% filter(year != 2017 & year != 2010) %>% 
     group_by(month, year) %>% 
     summarise(totalfullfare_year = sum(fare_swipe)) %>%
     ggplot(aes(x=month, y= totalfullfare_year)) 
@@ -155,17 +174,14 @@ g = df1 %>% filter(year != 2017 & year != 2010) %>%
 g + geom_line(aes(color = year, group=year)) + 
     geom_smooth(method = 'lm', se =F) +
     facet_grid( year ~ . )
-    
-
-# 
 
 
 df %>% filter(To.Date > '2010-06-10') %>% 
-    filter(!year %in% c(2010, 2017)) %>% filter(fare_type == 'Full.Fare')
+    filter(!year %in% c(2010, 2017)) %>% filter(fare_type == 'Full.Fare') %>% dim()
 
 
-
-
+##########################################
+Type
 
 
 
