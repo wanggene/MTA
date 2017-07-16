@@ -41,7 +41,7 @@ function(input, output) {
                         options=list(
                             height= 350,
                             legend='none',
-                            title="Total Swipe Number", 
+                            title="Total MTA Fare Card Swipe Number", 
                             vAxis="{title:'Count'}"
                             #hAxis="{title:'height (in)'}"
                             ))
@@ -56,11 +56,41 @@ function(input, output) {
                         options=list(
                             height= 350,
                             legend='none',
-                            title="Total Swipe Number", 
+                            title="Avearage MTA Fare Card Swipe Number", 
                             vAxis="{title:'Count'}"
                             #hAxis="{title:'height (in)'}"
                         ))
-    })  
+    }) 
+    
+    
+    ### -----------------valueBox -Tab ggv1-----------------------
+    
+    output$period_max <- renderValueBox({
+        valueBox(
+            value = max(g_sum()$swipe_count),
+            subtitle = "Max counts",
+            icon = icon("star")
+        )
+    })   
+    
+    output$period_mean <- renderValueBox({
+        valueBox(
+            value = round(mean(g_sum()$swipe_count),0),
+            subtitle = "Average counts",
+            icon = icon("star")
+        )
+    }) 
+    
+    
+    output$period_rank_1 <- renderValueBox({
+        valueBox(
+            value = arrange(g_sum(), desc(swipe_count))[1, input$period],
+            subtitle = "Rank #1",
+            icon = icon("star")
+        )
+    }) 
+    
+    
     
 
        
@@ -75,6 +105,16 @@ function(input, output) {
             dplyr::summarise(swipe_count = sum(fare_swipe))
         
     })
+    
+    
+    g_sum_station_top = reactive({   
+        df %>% group_by( year, month, Station) %>% 
+            summarise(Total_swipe = sum(fare_swipe)) %>% 
+            arrange(desc(Total_swipe)) %>% head(1)
+    })
+    
+    
+    
     
 #---------- ggv2
     
@@ -122,6 +162,44 @@ function(input, output) {
         #hAxis="{title:'height (in)'}"))
         
     }) 
+    
+    
+### -----------------valueBox -Tab ggv2-----------------------
+    
+    output$top_1_station <- renderValueBox({
+        valueBox(
+            value = max(g_sum_station_top()$Station),
+            subtitle = "Busiest Station",
+            icon = icon("star")
+        )
+    })   
+    
+
+    output$top_1_year <- renderValueBox({
+        valueBox(
+            value = g_sum_station_top()$year,
+            subtitle = "Busiest Year",
+            icon = icon("star")
+        )
+    })   
+    
+    output$top_1_month <- renderValueBox({
+        valueBox(
+            value =   g_sum_station_top()$month,
+            subtitle = "Busiest Month",
+            icon = icon("star")
+        )
+    }) 
+    
+    
+    output$top_1_count <- renderValueBox({
+        valueBox(
+            value = g_sum_station_top()$Total_swipe,
+            subtitle = "Total swipe",
+            icon = icon("star")
+        )
+    }) 
+    
     
     
     

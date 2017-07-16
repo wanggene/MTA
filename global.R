@@ -9,7 +9,8 @@ library(shinydashboard)
 # load mta data df1
 
 load('mta2010_gathered.Rda')
-df = df1 %>% filter(To.Date > '2010-06-10')
+df = df1 %>% filter(To.Date > '2010-06-10' ) %>%
+    filter(To.Date < '2017-01-01')
 
 
 
