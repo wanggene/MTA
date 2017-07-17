@@ -1,0 +1,74 @@
+---
+title: "MTA Fare"
+author: "JW"
+date: "7/17/2017"
+output: 
+  ioslides_presentation: 
+    widescreen: yes
+runtime: shiny
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+# zoom out the markdown file
+# Run Presentation, for shiny App, click the app, load in a new browser, 
+# refresh or click the time line tab
+
+```
+
+## NYC MTA introduction
+
+New York City Matropolitom Transport Aurhority (MTA) and overall information
+
+- One of the busiest mta system in the world
+- 23 line in 5 boro, millions rider in NYC
+- There are over 500 subway stations, 19 different fare type
+- MTA collect fare swipe data for each time rider swipe the card
+- MTA release weekly swipe count online
+
+## Dataset:
+
+#### MTA fare Dataset: 
+- raw data from MTA website: http://web.mta.info/developers/fare.html
+- data frame from New York State Open Data: https://data.ny.gov/Transportation/Fare-Card-History-for-Metropolitan-Transportation-/v7qc-gwpn
+
+- add the snapshot of
+
+## Questions:
+- what is the overall trend of fare card usage in MTA system, by Year and Month?
+- what are the busiest subway station in MTA, and which fare type are most commently used?
+- Any insight information can be extracted form the dataset?
+    + There are increased use of Sinior/Disable fare type from 2011 to 2016
+    + There are increased use of Mail / Unlimited fare card use
+    + 
+- what information can be used to improve the service or make more profit
+        + for specific group of MTA rider
+        + Ad in specific station or fare card
+
+## Shiny App
+
+```{r pressure, echo=FALSE}
+shiny::shinyAppDir(
+    appDir = "/Users/wanggene/GitHub/MTA/",
+  # system.file("/Users/wanggene/GitHub/MTA/", package="shiny"),
+    options=list(
+     width="120%", height=600
+  )
+)
+
+```
+
+## Summary
+
+- Use Shiny App, we can have a overview of MTA fare history dataset
+- We 
+- 
+
+## Future Works
+
+- Add the proportion information in the plot, and do statistic analysis.
+- Integate geographic information into app, we can observe the change.
+- Keep update with MTA website, add new data in the data frame.
+
+##                          Thank You!
+
