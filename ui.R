@@ -27,7 +27,7 @@ dashboardSidebar(
             #2 select fare type and train station
             tags$hr(style="border-color: black;"),
             menuItem("Station ~ Fare Type", tabName = "fare_type", icon = icon("subway")),
-            radioButtons("period", label='', choices = period, inline = TRUE),
+            radioButtons("period", label='', choices = periods, inline = TRUE),
             selectizeInput(inputId="station", h6("Station"), station, 
                            selected = '42ND STREET & GRAND CENTRAL'),            
             selectizeInput(inputId="fare_type", h6("Fare Type"), fare_type,

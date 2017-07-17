@@ -234,13 +234,21 @@ function(input, output) {
     }) 
     
     output$timeline_station <- renderValueBox({
-         valueBox( value = input$station, subtitle = "Station", icon = icon("star"))}) 
+         valueBox( value = tags$p(input$station, style = "font-size: 70%;"), 
+                   subtitle = tags$p("Station", style = "font-size: 120%;"), 
+                   icon = icon("star"))
+        }) 
     
     output$timeline_fare_type <- renderValueBox({
-        valueBox( value = input$fare_type, subtitle = "Fare Type", icon = icon("star"))}) 
+        valueBox(value = tags$p(input$fare_type, style = "font-size: 70%;"), 
+                  subtitle = tags$p("Fare Type",  style = "font-size: 120%;"),
+                  icon = icon("star"))
+        }) 
     
     output$timeline_total_swipe <- renderValueBox({
-        valueBox( value = g_timeline()$swipe_count, subtitle = "Total Swipe", icon = icon("star"))
+        valueBox( value = tags$p(g_timeline()$swipe_count, style = "font-size: 70%;"), 
+                  subtitle = tags$p("Total Swipe Count (Million)",  style = "font-size: 120%;"),
+                  icon = icon("star"))
     }) 
     
 

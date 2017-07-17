@@ -17,7 +17,7 @@ df = df1 %>% filter(To.Date > '2010-06-10' ) %>%
 # create variable with colnames as choice
 
 # time period
-period = list("year", "month")
+periods = list("year", "month")
 
 
 
