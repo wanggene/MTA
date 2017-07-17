@@ -60,12 +60,25 @@ dashboardBody(
             #         valueBoxOutput("period_rank_1"),
             #         valueBoxOutput("period_mean")
             #     ),
-            fluidRow(box(htmlOutput("ggv_sum"), width=6, height = 350),
-                     box(htmlOutput("ggv_stat_seq"), width=6, height =350),
-                     box(htmlOutput( "ggv_mean"), width =6, height = 350),
-                     box(htmlOutput("ggv_type_seq"), width=6, height =350)
-
-            )),
+            
+            # fluidRow(box(htmlOutput("ggv_sum"), width=6, height = 350),
+            #          box(htmlOutput("ggv_stat_seq"), width=6, height =350),
+            #          box(htmlOutput( "ggv_mean"), width =6, height = 350),
+            #          box(htmlOutput("ggv_type_seq"), width=6, height =350)
+            # 
+            # )),
+        
+        fluidRow(box(htmlOutput("ggv_sum"),
+                     htmlOutput( "ggv_mean"), width=4, height = 700),
+                 box(htmlOutput("ggv_stat_seq"), width=4, height =700),
+                 
+                 box(htmlOutput("ggv_type_seq"), width=4, height =700)
+                 
+        )),   
+        
+        
+        
+        
 
         tabItem(tabName = "fare_type",
             # fluidRow(
