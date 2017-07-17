@@ -17,6 +17,11 @@ df_st = mta_station
 
 ##################################################################
 #####################  clean the mta_fare data ############################
+
+load('mta2010_gathered.Rda')
+#load('mta2010_cleaned.Rda')
+
+
 # gather the columns of different fare type
 
 df1 = gather(df, key = fare_type, value = fare_swipe, c(-1,-2,-3,-4))
@@ -50,6 +55,22 @@ df1$year = as.factor(df1$year)
 df1$week = strftime(df1$From.Date, "%W")
 df1$week = as.factor(df1$week)
 
+
+# change the fare_type name, remove 'dot'
+names = 'John.Andrew.Thoms'
+
+remove_dot = function(x) {
+    Lst = paste(strsplit(x, split='.', fixed = T)[[1]], collapse = ' ')
+    return (Lst)}
+
+df1$fare_type = unlist(lapply(df1$fare_type, remove_dot))
+
+# change fare_swipe to numeric type, otherwise the integer will overflow
+df1$fare_swipe = as.numeric(df1$fare_swipe)
+
+
+######## Save file#########
+
 save(df1, file='mta2010_gathered.Rda')
 
 # there are some station has two StationID
@@ -72,8 +93,7 @@ df1 %>% group_by(Station, Remote.Station.ID) %>%
 
 #############################################################
 ######################    Look at the data    ###############
-load('mta2010_gathered.Rda')
-#load('mta2010_cleaned.Rda')
+
 head(df1)
 # Q1. what is the total full fare by year, month, week
 
@@ -180,9 +200,26 @@ df %>% filter(To.Date > '2010-06-10') %>%
     filter(!year %in% c(2010, 2017)) %>% filter(fare_type == 'Full.Fare') %>% dim()
 
 
-##########################################
-Type
+# Q3. Which station has highest annual total swipe count?
+g = df %>% 
+    #filter(year != 2017 & year != 2010) %>% 
+    group_by(Station) %>% 
+    summarise(swipe_count = sum(fare_swipe)/1e6) %>% 
+    arrange(desc(swipe_count)) %>% head(20)
 
+# reorder Station based on count value    
+g$Station = factor(g$Station, levels = g$Station[order(g$swipe_count)])
+
+ggplot(g, aes(x=Station, y = swipe_count)) +
+    geom_bar(aes(x=Station , y = swipe_count), stat='identity') +
+    coord_flip()
+
+# which are most commen fare type
+
+    df %>% filter(year != 2017 & year != 2010) %>% 
+    group_by(fare_type) %>% 
+    dplyr::summarise(swipe_count = sum(fare_swipe)) %>%
+    arrange(desc(swipe_count)) 
 
 
 

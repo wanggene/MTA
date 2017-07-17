@@ -1,7 +1,7 @@
 library(shiny)
 library(DT)
 library(dplyr)
-#library(ggplot2)
+library(ggplot2)
 library(dygraphs)
 library(googleVis)
 library(shinydashboard)

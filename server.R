@@ -4,7 +4,6 @@ library(ggplot2)
 library(dplyr)
 library(dygraphs)
 library(googleVis)
-
 function(input, output) {
     
 ################################ Reactive ##################################
@@ -15,52 +14,115 @@ function(input, output) {
     g_sum = reactive({   
         df %>% 
             filter(!year %in% c(2010, 2017)) %>% 
-            group_by_(input$period) %>% 
-            dplyr::summarise(swipe_count = sum(fare_swipe))
+            group_by(year) %>%                                     # input$period
+            dplyr::summarise(swipe_count = sum(fare_swipe)/1e6) 
         
         
     })
     
     ################--------------ggv1_mean : average swipe count in each time period 
     g_mean = reactive({   
-        df %>% #filter(!year %in% c(2010, 2017)) %>% 
-            group_by_(input$period) %>% 
+        df %>% filter(!year %in% c(2010, 2017)) %>% 
+            group_by(month) %>% 
             dplyr::summarise(swipe_count = mean(fare_swipe))
         
         
     })
-
+    
+    
+    ############# ---------------ggv1_top station: find the top station in the year
+    g_stat_seq = reactive({ 
+        g_stat_seq = df %>% 
+        filter(year != 2017 & year != 2010) %>% 
+        group_by(Station) %>% 
+        summarise(swipe_count = sum(fare_swipe)/1e6) %>% 
+        arrange(desc(swipe_count)) %>% head(10)
+    
+    # reorder Station based on count value    
+        g_stat_seq$Station = factor(g_stat_seq$Station, levels = g_stat_seq$Station[order(g_stat_seq$swipe_count)])
+        g_stat_seq
+    
+    })
+    
+    ##########----------------
+    g_type_seq = reactive({ 
+        g_type_seq = df %>% 
+            filter(year != 2017 & year != 2010) %>% 
+            group_by(fare_type) %>% 
+            summarise(swipe_count = sum(fare_swipe)/1e9) %>% 
+            arrange(desc(swipe_count)) %>% head(10)
+        
+        # reorder Station based on count value    
+        g_type_seq$fare_type = factor(g_type_seq$fare_type, levels = g_type_seq$fare_type[order(g_type_seq$swipe_count)])
+        g_type_seq
+        
+    })
+    
+    
  
     ###----------- ggv1 plots 
     
     # show timeline of fare count by period group by period, sum or mean of fare swipe count !!!!!!!!! done
+    # total count by year
     output$ggv_sum = renderGvis({
         gvisColumnChart(g_sum(), 
-                        xvar = input$period, 
+                        xvar = 'year', 
                         yvar = 'swipe_count', 
                         options=list(
-                            height= 350,
+                            height= 300,
                             legend='none',
                             title="Total MTA Fare Card Swipe Number", 
-                            vAxis="{title:'Count'}"
-                            #hAxis="{title:'height (in)'}"
+                            vAxis="{title:'Count (Million)'}",
+                            hAxis="{title:'Year'}"
                             ))
         
     }) 
     
-    
+    # total count by month
     output$ggv_mean = renderGvis({
         gvisColumnChart(g_mean(), 
-                        xvar = input$period, 
+                        xvar = 'month', 
                         yvar = 'swipe_count', 
                         options=list(
-                            height= 350,
+                            height= 300,
                             legend='none',
                             title="Avearage MTA Fare Card Swipe Number", 
-                            vAxis="{title:'Count'}"
-                            #hAxis="{title:'height (in)'}"
+                            vAxis="{title:'Count'}",
+                            hAxis="{title:'Month'}"
                         ))
     }) 
+    
+    
+   # find the top 10 station
+    output$ggv_stat_seq = renderGvis({
+        gvisBarChart(g_stat_seq(),
+                        xvar = 'Station',
+                        yvar = 'swipe_count',
+                        options=list(
+                            height= 300,
+                            #width = 4,
+                            legend='none',
+                            title="Top 10 Busiest MTA Subway Stations",
+                            hAxis="{title:'Count (Million)'}" #,
+                            #vAxis="{title:'Station'}"
+                        ))
+    })
+
+    #####
+    output$ggv_type_seq = renderGvis({
+        gvisBarChart(g_type_seq(),
+                     xvar = 'fare_type',
+                     yvar = 'swipe_count',
+                     options=list(
+                         height= 300,
+                         #weight = 6,
+                         legend='none',
+                         title="Most Commen MTA Subway Fare Type",
+                         hAxis="{title:'Count (Billion)'}",
+                         vAxis="{title:'Fare Type'}"
+                     ))
+    })
+    
     
     
     ### -----------------valueBox -Tab ggv1-----------------------
@@ -68,7 +130,7 @@ function(input, output) {
     output$period_max <- renderValueBox({
         valueBox(
             value = max(g_sum()$swipe_count),
-            subtitle = "Max counts",
+            subtitle = "Max counts (Million)",
             icon = icon("star")
         )
     })   
@@ -84,7 +146,7 @@ function(input, output) {
     
     output$period_rank_1 <- renderValueBox({
         valueBox(
-            value = arrange(g_sum(), desc(swipe_count))[1, input$period],
+            value = arrange(g_mean(), desc(swipe_count))[1, 'month'],
             subtitle = "Rank #1",
             icon = icon("star")
         )
@@ -97,39 +159,62 @@ function(input, output) {
  #####################-------ggv2: fare type  ------------------   
     #      Now let's look at different fare type ----------------
     #      only count the sum of fare swipe  ---------------
-    g_sum_type = reactive({   
+    g_sum_type = reactive({
+        df %>%
+            filter(!year %in% c(2010, 2017)) %>%
+            filter(fare_type == input$fare_type) %>%
+            group_by_(input$period) %>%
+            dplyr::summarise(swipe_count = sum(fare_swipe)/1e6)
+
+    })
+    
+    g_sum_station = reactive({   
         df %>% 
             filter(!year %in% c(2010, 2017)) %>% 
-            filter(fare_type == input$fare_type) %>%
+            filter(Station == input$station) %>%
             group_by_(input$period) %>% 
-            dplyr::summarise(swipe_count = sum(fare_swipe))
+            dplyr::summarise(swipe_count = sum(fare_swipe)/1e6)
         
     })
     
     
-    g_sum_station_top = reactive({   
-        df %>% group_by( year, month, Station) %>% 
-            summarise(Total_swipe = sum(fare_swipe)) %>% 
-            arrange(desc(Total_swipe)) %>% head(1)
-    })
     
-    
+    # g_sum_station_top = reactive({   
+    #     df %>% group_by( year, month, Station) %>% 
+    #         summarise(Total_swipe = sum(fare_swipe)) %>% 
+    #         arrange(desc(Total_swipe)) %>% head(1)
+    # })
     
     
 #---------- ggv2
     
-    output$ggv_sum_type = renderGvis({
-        gvisColumnChart(g_sum_type(), 
+    output$ggv_sum_station = renderGvis({
+        gvisColumnChart(g_sum_station(), 
                         xvar = input$period, 
                         yvar = 'swipe_count', 
                         options=list(
-                            height= 350,
+                            height= 300,
                             legend='none',
-                            title="Total Swipe Number", 
-                            vAxis="{title:'Count'}" ) ) # ,
-        #hAxis="{title:'height (in)'}"))
+                            title= input$station , 
+                            vAxis="{title:'Count (Million)'}" ) ) # ,
+                            #hAxis="{title:'height (in)'}"))
     
     }) 
+    
+    output$ggv_sum_type = renderGvis({
+        gvisColumnChart(g_sum_station(), 
+                        xvar = input$period, 
+                        yvar = 'swipe_count', 
+                        options=list(
+                            height= 300,
+                            legend='none',
+                            title= input$fare_type, 
+                            vAxis="{title:'Count (Million)'}" ) ) # ,
+                            #hAxis="{title:'height (in)'}"))
+        
+    }) 
+    
+    
     
     
 #####################-------ggv3: station  ------------------   
@@ -141,7 +226,7 @@ function(input, output) {
             filter(fare_type == input$fare_type) %>%
             filter(Station == input$station) %>% 
             group_by_(input$period) %>%
-            dplyr::summarise(swipe_count = sum(fare_swipe))
+            dplyr::summarise(swipe_count = sum(fare_swipe)/1e6)
  
         
     })
@@ -155,10 +240,10 @@ function(input, output) {
                         xvar = input$period, 
                         yvar = 'swipe_count', 
                         options=list(
-                            height= 350,
+                            height= 300,
                             legend='none',
-                            title="Total Swipe Number", 
-                            vAxis="{title:'Count'}" ) ) # ,
+                            title="Total Swipe Count By Each Fare Type in Each Station", 
+                            vAxis="{title:'Count (Million)'}" ) ) # ,
         #hAxis="{title:'height (in)'}"))
         
     }) 
@@ -211,8 +296,7 @@ function(input, output) {
     
     
     g_timeline = reactive({
-        df %>%  
-            filter(fare_type == input$fare_type) %>%
+        df %>%  filter(fare_type == input$fare_type) %>%
             filter(Station == input$station) %>%
             group_by(To.Date) %>% 
             dplyr::summarise(swipe_count = sum(fare_swipe))
@@ -229,69 +313,15 @@ function(input, output) {
                             
                             options=list(
                                 #width = 10,
-                                #height= 500,
-                                width='95%', height=500)
+                                height= 300,
+                                width='90%')
                             )
         
     }) 
     
     
-    
-    
-#####================================================================ old code
-#   
-#     output$ggv2 = renderGvis({
-#         gvisColumnChart(g2(), 
-#                         xvar = input$period, 
-#                         yvar = 'totalfullfare_ym', 
-#                         options=list(
-#                             
-#                             lineWidth=2, pointSize=0,
-#                             title="Women", 
-#                             vAxis="{title:'weight (lbs)'}",
-#                             hAxis="{title:'height (in)'}"))
-#         
-#     }) 
-#     
-# # show histogram using googleVis: ggv1
-#     
-#     output$ggv1 = renderGvis({
-#         gvisHistogram(g3(), 
-#                       options=list(
-#                           title="Histogram of total swipe in each station", 
-#                           vAxis="{title:'weight (lbs)'}",
-#                           # hAxis="{title:'height (in)'}", 
-#                           width='95%', height=500))
-# 
-#     })
+ 
 
 
-
-########################### ggplot2 #########################
-    
-# attach output object (id is TripDuration) to output
-    # output$totalswipe = renderPlot({
-    #    g1() %>% group_by_(input$period) %>% 
-    #         dplyr::summarise(totalfullfare_ym = sum(fare_swipe)) %>%
-    #         ggplot(aes_string(x = input$period, y = 'totalfullfare_ym')) + 
-    #         geom_bar( aes_string(fill = input$period), stat='identity', show.legend = F) +
-    #         ggtitle('Total Swipe in MTA By ', input$period) +
-    #         ylab('Total Number of Swipe') + 
-    #         theme(text = element_text(size=16))
-    # })
-    
-    
-#output$TakeTrip = renderPlot({ })
-    
-    # output$avgswipe = renderPlot({
-    #     g2() %>% group_by_(input$period) %>% 
-    #         dplyr::summarise(totalfullfare_ym = mean(fare_swipe)) %>%
-    #         ggplot(aes_string(x = input$period, y = 'totalfullfare_ym')) + 
-    #         geom_bar( aes_string(fill = input$period), stat='identity', show.legend = F) +
-    #         ggtitle('Average Swipe in MTA By ', input$period) +
-    #         theme(text = element_text(size=10))
-    # })
-    # 
-##############################################################    
 
 } #1
