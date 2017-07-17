@@ -22,10 +22,14 @@ period = list("year", "month")
 
 
 # fare type
-fare_type = unique(df$fare_type)
-
+#fare_type = sort(unique(df$fare_type))
+fare_type = df %>% filter(year != 2017 & year != 2010) %>% 
+    group_by(fare_type) %>% summarise(swipe_count = sum(fare_swipe)/1e6) %>% 
+    arrange(desc(swipe_count)) %>% select(fare_type) # %>% head(10) 
 
 
 # station name
-station = unique(df$Station)
-
+#station = sort(unique(df$Station))
+station = df %>% filter(year != 2017 & year != 2010) %>% 
+    group_by(Station) %>% summarise(swipe_count = sum(fare_swipe)/1e6) %>% 
+    arrange(desc(swipe_count)) %>% select(Station) %>% head(20)
