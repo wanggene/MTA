@@ -69,6 +69,7 @@ function(input, output) {
                         xvar = 'year', 
                         yvar = 'swipe_count', 
                         options=list(
+                            #width = 4,
                             height= 300,
                             legend='none',
                             title="Total MTA Fare Card Swipe Number", 
@@ -84,6 +85,7 @@ function(input, output) {
                         xvar = 'month', 
                         yvar = 'swipe_count', 
                         options=list(
+                            #width = 4,
                             height= 300,
                             legend='none',
                             title="Avearage MTA Fare Card Swipe Number", 
@@ -99,7 +101,7 @@ function(input, output) {
                         xvar = 'Station',
                         yvar = 'swipe_count',
                         options=list(
-                            height= 300,
+                            height= 700,
                             #width = 4,
                             legend='none',
                             title="Top 10 Busiest MTA Subway Stations",
@@ -114,8 +116,8 @@ function(input, output) {
                      xvar = 'fare_type',
                      yvar = 'swipe_count',
                      options=list(
-                         height= 300,
-                         #weight = 6,
+                         height= 700,
+                         #width = 4,
                          legend='none',
                          title="Most Commen MTA Subway Fare Type",
                          hAxis="{title:'Count (Billion)'}",
@@ -196,13 +198,13 @@ function(input, output) {
                             height= 300,
                             legend='none',
                             title= input$station , 
-                            vAxis="{title:'Count (Million)'}" ) ) # ,
-                            #hAxis="{title:'height (in)'}"))
+                            vAxis="{title:'Count (Million)'}" ) )#,
+                            #hAxis="{title: input$period }")
     
     }) 
     
     output$ggv_sum_type = renderGvis({
-        gvisColumnChart(g_sum_station(), 
+        gvisColumnChart(g_sum_type(), 
                         xvar = input$period, 
                         yvar = 'swipe_count', 
                         options=list(
