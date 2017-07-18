@@ -9,8 +9,10 @@ library(shinydashboard)
 # load mta data df1
 
 load('mta2010_gathered.Rda')
-df = df1 %>% filter(To.Date > '2010-06-10' ) %>%
-    filter(To.Date < '2017-01-01')
+df = df1 %>% filter(!year %in% c(2010, 2017))
+    
+    # filter(To.Date > '2010-06-10' ) %>%
+    # filter(To.Date < '2017-01-01') 
 
 
 
@@ -19,7 +21,7 @@ df = df1 %>% filter(To.Date > '2010-06-10' ) %>%
 # time period
 periods = list("year", "month")
 
-
+units = list("count", "percentile")
 
 # fare type
 #fare_type = sort(unique(df$fare_type))

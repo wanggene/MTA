@@ -11,37 +11,37 @@ shinyUI(dashboardPage(
 dashboardHeader(title = "MTA FARE"),
 
 dashboardSidebar(
-    
-    
     sidebarUserPanel(h5("NYC DSA"),
     image = "https://yt3.ggpht.com/-04uuTMHfDz4/AAAAAAAAAAI/AAAAAAAAAAA/Kjeupp-eNNg/s100-c-k-no-rj-c0xffffff/photo.jpg"),
    
-
     sidebarMenu(
-
            
-            #1 Total count trend by period, group by period, count is the sum and mean, go to 
-            tags$hr(style="border-color: black;"), 
+            #1 Total count trend by period, group by period, count is the sum and mean
+            #tags$hr(style="border-color: black;"), 
             menuItem("Overview of Fare Swipe", tabName = "swipe_count", icon = icon("bar-chart")),
-            
+
             #2 select fare type and train station
-            tags$hr(style="border-color: black;"),
+            #tags$hr(style="border-color: black;"),
             menuItem("Station ~ Fare Type", tabName = "fare_type", icon = icon("subway")),
-            radioButtons("period", label='', choices = periods, inline = TRUE),
-            selectizeInput(inputId="station", h6("Station"), station, 
-                           selected = '42ND STREET & GRAND CENTRAL'),            
-            selectizeInput(inputId="fare_type", h6("Fare Type"), fare_type,
-                           selected = 'Full Fare'),
             
             
-            tags$hr(style="border-color: black;"),
-            menuItem("Weekly Timeline", tabName = "timeline", icon = icon("line-chart")), #4
-            # Input: Checkbox if check each station
-            # checkboxInput("Check Statioin", "Station", TRUE),
+            #3 time line chart
+            #tags$hr(style="border-color: black;"),
+            menuItem("Weekly Timeline", tabName = "timeline", icon = icon("line-chart")),
+            
+            menuItem("Options", tabName = "Options", icon = icon("filter"),
+                     radioButtons("period", label='', choices = periods, inline = TRUE),
+                     selectizeInput(inputId="station", h6("Station"), station, 
+                                    selected = '42ND STREET & GRAND CENTRAL'),            
+                     selectizeInput(inputId="fare_type", h6("Fare Type"), fare_type,
+                                    selected = 'Full Fare'), selected = 'fare_type',
+                     checkboxInput(inputId="station_timeline", "Check Statioin" , TRUE),
+                     checkboxInput(inputId = "type_timeline", "Check Fare Type",  TRUE)
+            ),
 
-            
+            #4 Raw data table
+            #tags$hr(style="border-color: black;"),
             menuItem("Explore Raw Data", tabName = "database", icon = icon("database")) #5
-
 
     )
 
@@ -77,6 +77,8 @@ dashboardBody(
                      valueBoxOutput("timeline_total_swipe", width = 3)),
             
             fluidRow(htmlOutput("ggv_timeline"), width=10, height=600)
+
+
         ),
             
         tabItem(tabName = "database")#,
