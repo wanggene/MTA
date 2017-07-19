@@ -116,7 +116,7 @@ function(input, output) {
     #      Now let's look at different fare type ----------------
     #      only count the sum of fare swipe  ---------------
     
-    g_sum2 = reactive({   df %>% filter(!year %in% c(2010, 2017)) %>% group_by_(input$period) %>%    
+    g_sum2 = reactive({  df %>% filter(!year %in% c(2010, 2017)) %>% group_by_(input$period) %>%    
             dplyr::summarise(swipe_count = sum(fare_swipe)/1e6) 
     })
     
@@ -253,34 +253,78 @@ function(input, output) {
         
     }) 
     
-#----------valueBox-----------------------------
+#----------valueBox------------------------------------------------
     
-    output$timeline_station <- renderValueBox({
-         valueBox( value = tags$p(input$station, style = "font-size: 70%;"), 
-                   subtitle = tags$p("Station", style = "font-size: 120%;"), 
+    output$overview_total_swipe <- renderValueBox({
+        valueBox( value = tags$p(round(g_sum()$swipe_count %>% mean()/1e3, 1) , style = "font-size: 60%;"), 
+                  subtitle = tags$p("2010 ~2016 MTA Annual Fare Swipes (billiion) ", style = "font-size: 150%;"), 
+                  icon = icon("star"))
+    }) 
+    
+    output$overview_top_station <- renderValueBox({
+        valueBox(value = tags$p(stations, style = "font-size: 60%;"), 
+                 subtitle = tags$p("Subway Stations",  style = "font-size: 150%;"),
+                 icon = icon("star"))
+    }) 
+    
+    output$overview_top_fare_type <- renderValueBox({
+        valueBox( value = tags$p(fare_types, style = "font-size: 60%;"), 
+                  subtitle = tags$p("Active Fare Types",  style = "font-size: 150%;"),
+                  icon = icon("star"))
+    })   
+    
+    
+    
+    
+    
+# ------------------------------------------------------------------    
+    
+    output$timeline_station1 <- renderValueBox({
+         valueBox( value = tags$p(input$station, style = "font-size: 60%;"), 
+                   subtitle = tags$p("Station", style = "font-size: 150%;"), 
                    icon = icon("star"))
         }) 
     
-    output$timeline_fare_type <- renderValueBox({
-        valueBox(value = tags$p(input$fare_type, style = "font-size: 70%;"), 
-                  subtitle = tags$p("Fare Type",  style = "font-size: 120%;"),
+    output$timeline_fare_type1 <- renderValueBox({
+        valueBox(value = tags$p(input$fare_type, style = "font-size: 60%;"), 
+                  subtitle = tags$p("Fare Type",  style = "font-size: 150%;"),
                   icon = icon("star"))
         }) 
     
-    output$timeline_total_swipe <- renderValueBox({
-        valueBox( value = tags$p(g_timeline()$swipe_count, style = "font-size: 70%;"), 
-                  subtitle = tags$p("Total Swipe Count (Million)",  style = "font-size: 120%;"),
+    output$timeline_total_swipe1 <- renderValueBox({
+        valueBox( value = tags$p(g_timeline_both()$swipe_count, style = "font-size: 60%;"), 
+                  subtitle = tags$p("Total Swipe Count (Million)",  style = "font-size: 150%;"),
+                  icon = icon("star"))
+    }) 
+    
+ #------------------------   
+    
+    output$timeline_station2 <- renderValueBox({
+        valueBox( value = tags$p(input$station, style = "font-size: 60%;"), 
+                  subtitle = tags$p("Station", style = "font-size: 150%;"), 
+                  icon = icon("star"))
+    }) 
+    
+    output$timeline_fare_type2 <- renderValueBox({
+        valueBox(value = tags$p(input$fare_type, style = "font-size: 60%;"), 
+                 subtitle = tags$p("Fare Type",  style = "font-size: 150%;"),
+                 icon = icon("star"))
+    }) 
+    
+    output$timeline_total_swipe2 <- renderValueBox({
+        valueBox( value = tags$p(g_timeline_both()$swipe_count, style = "font-size: 60%;"), 
+                  subtitle = tags$p("Total Swipe Count (Million)",  style = "font-size: 150%;"),
                   icon = icon("star"))
     }) 
     
 
+
 # ---------------ggv5  tab database
     
-    # output$rawtable <- renderPrint({
-    #     print(head(df, input$maxrows))
-    #     options(width=12)
-    #     
-    # })
+    output$table <- DT::renderDataTable({
+        datatable(df, rownames=FALSE) %>%
+            formatStyle(input$selected, background="skyblue", fontWeight='normal')
+    })
 
 
 } #1
