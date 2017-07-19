@@ -18,8 +18,9 @@ df_st = mta_station
 ##################################################################
 #####################  clean the mta_fare data ############################
 
-load('mta2010_gathered.Rda')
+load('mta2011_gathered.Rda')
 #load('mta2010_cleaned.Rda')
+df = df1 %>% filter(!year %in% c(2010, 2017))
 
 
 # gather the columns of different fare type
@@ -71,7 +72,7 @@ df1$fare_swipe = as.numeric(df1$fare_swipe)
 
 ######## Save file#########
 
-save(df1, file='mta2010_gathered.Rda')
+save(df, file='mta2011_gathered.Rda')
 
 # there are some station has two StationID
 two_stationID = df1 %>% select(Remote.Station.ID, Station) %>% 
