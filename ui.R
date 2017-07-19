@@ -2,7 +2,7 @@ library(DT)
 library(dplyr)
 library(shiny)
 library(shinydashboard)
-library(dygraphs)
+#library(dygraphs)
 library(googleVis)
 
 shinyUI(dashboardPage(

@@ -1,8 +1,8 @@
 #server.R
 library(shiny)
-library(ggplot2)
+#library(ggplot2)
 library(dplyr)
-library(dygraphs)
+#library(dygraphs)
 library(googleVis)
 function(input, output) {
     
