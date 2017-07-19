@@ -3,8 +3,9 @@ title: MTA Fare Card History
 account: wanggene
 server: shinyapps.io
 appId: 198002
-bundleId: 908472
+bundleId: 908477
 url: https://wanggene.shinyapps.io/mta_fare_card_history/
-when: 1500442443.71734
+when: 1500442881.89749
 asMultiple: FALSE
 asStatic: FALSE
+ignoredFiles: MTA_fare1.Rmd|mta2010_cleaned.Rda
