@@ -1,8 +1,7 @@
+#library(shiny)
+library(shinydashboard)
 library(DT)
 library(dplyr)
-library(shiny)
-library(shinydashboard)
-#library(dygraphs)
 library(googleVis)
 
 shinyUI(dashboardPage(
@@ -37,8 +36,8 @@ dashboardSidebar(
             #3 time line chart
             tags$hr(style="border-color: black;"),
             menuItem("Timeline of Fare Swipe (weekly)", tabName = "timeline", icon = icon("line-chart")),
-            checkboxInput(inputId="station_timeline", "Chooe Station" , TRUE),
-            checkboxInput(inputId = "type_timeline", "Choose Fare Type",  TRUE),
+            checkboxInput(inputId="station_timeline", "Chooe Station" , FALSE),
+            checkboxInput(inputId = "type_timeline", "Choose Fare Type",  FALSE),
 
 
             #4 Raw data table

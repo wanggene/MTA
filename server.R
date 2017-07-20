@@ -1,8 +1,7 @@
 #server.R
-library(shiny)
-#library(ggplot2)
+#library(shiny)
 library(dplyr)
-#library(dygraphs)
+library(shinydashboard)
 library(googleVis)
 function(input, output) {
     
@@ -24,7 +23,7 @@ function(input, output) {
     ############# ---------------ggv1_top station: find the top station in the year
     g_stat_seq = reactive({ g_stat_seq = df %>% 
         group_by(Station) %>% 
-        summarise(swipe_count = sum(fare_swipe)/1e6) %>% 
+        summarise(swipe_count = sum(fare_swipe)/ (6 *1e6)) %>% 
         arrange(desc(swipe_count)) %>% head(10)
     
     # reorder Station based on count value    
@@ -36,8 +35,8 @@ function(input, output) {
     ##########---------------- moste common fare type
     g_type_seq = reactive({ g_type_seq = df %>% 
             group_by(fare_type) %>% 
-            summarise(swipe_count = sum(fare_swipe)/1e9) %>% 
-            arrange(desc(swipe_count)) %>% head(10)
+            summarise(swipe_count = sum(fare_swipe)/ (6 * 1e6)) %>% 
+            arrange(desc(swipe_count)) %>% head(5)
         
         # reorder type based on count value    
         g_type_seq$fare_type = factor(g_type_seq$fare_type, levels = g_type_seq$fare_type[order(g_type_seq$swipe_count)])
@@ -91,7 +90,7 @@ function(input, output) {
                             #width = 4,
                             legend='none',
                             title="Top 10 Busiest MTA Subway Stations",
-                            hAxis="{title:'Count (Million)'}" #,
+                            hAxis="{title:'Average Annual Swipe Count (Million)'}" #,
                             #vAxis="{title:'Station'}"
                         ))
     })
@@ -105,8 +104,8 @@ function(input, output) {
                          height= 300,
                          #width = 4,
                          legend='none',
-                         title="Most Commen MTA Subway Fare Type",
-                         hAxis="{title:'Count (Billion)'}",
+                         title="Most Commonly Used MTA Fare Type",
+                         hAxis="{title:'Average Annual Swipe Count (Million)'}",
                          vAxis="{title:'Fare Type'}"
                      ))
     })

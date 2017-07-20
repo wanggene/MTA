@@ -1,8 +1,6 @@
-library(shiny)
+#library(shiny)
 library(DT)
 library(dplyr)
-#library(ggplot2)
-#library(dygraphs)
 library(googleVis)
 library(shinydashboard)
 
@@ -26,7 +24,7 @@ units = list("count", "percentile")
 fare_types = length(unique(df$fare_type))
 fare_type = df %>% filter(year != 2017 & year != 2010) %>% 
     group_by(fare_type) %>% summarise(swipe_count = sum(fare_swipe)/1e6) %>% 
-    arrange(desc(swipe_count)) %>% select(fare_type) # %>% head(10) 
+    arrange(desc(swipe_count)) %>% select(fare_type) %>% head(15) 
 
 
 # station name
