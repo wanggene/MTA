@@ -10,14 +10,16 @@ function(input, output) {
 #################### -----------ggv1_sum : total swipe count in each time period 
 ##                              From 2011 to 2016                          ----------
     
-    g_sum = reactive({df %>% group_by(year) %>%
-            dplyr::summarise(swipe_count = sum(fare_swipe)/1e6)
+    g_sum = reactive({df %>% 
+            group_by(year) %>%
+            dplyr::summarise(swipe_count = round(sum(fare_swipe)/ 1e6,1))
         })
 
     
     ################--------------ggv1_mean : average swipe count in each time period 
-    g_mean = reactive({ df %>% group_by(month) %>% 
-            dplyr::summarise(swipe_count = mean(fare_swipe))
+    g_mean = reactive({ df %>% 
+            group_by(month) %>% 
+            dplyr::summarise(swipe_count = round(sum(fare_swipe)/1e6,1))
         })
     
     ############# ---------------ggv1_top station: find the top station in the year
@@ -57,8 +59,8 @@ function(input, output) {
                             height= 300,
                             legend='none',
                             title="Total MTA Fare Card Swipe Number",
-                            vAxis="{title:'Count (Million)'}",
-                            hAxis="{title:'Year'}"
+                            hAxis="{title:'Year'}",
+                            vAxis="{title:'Count (Million)', minValue:0, maxValue: 'auto' }"
                             ))
 
     })
@@ -74,8 +76,9 @@ function(input, output) {
                             height= 300,
                             legend='none',
                             title="Avearage MTA Fare Card Swipe Number", 
-                            vAxis="{title:'Count'}",
-                            hAxis="{title:'Month'}"
+                            #vAxis="{title:'Count'}",
+                            hAxis="{title:'Month'}",
+                            vAxis="{minValue:0 , maxValue:'auto', title:'Count (Million)'}"
                         ))
     }) 
     
@@ -90,8 +93,9 @@ function(input, output) {
                             #width = 4,
                             legend='none',
                             title="Top 10 Busiest MTA Subway Stations",
-                            hAxis="{title:'Average Annual Swipe Count (Million)'}" #,
-                            #vAxis="{title:'Station'}"
+                            hAxis="{title:'Average Annual Swipe Count (Million)'}"
+                            #vAxis="{title:'Station'}
+                            
                         ))
     })
 
@@ -116,23 +120,23 @@ function(input, output) {
     #      only count the sum of fare swipe  ---------------
     
     g_sum2 = reactive({  df %>% filter(!year %in% c(2010, 2017)) %>% group_by_(input$period) %>%    
-            dplyr::summarise(swipe_count = sum(fare_swipe)/1e6) 
+            dplyr::summarise(swipe_count = round(sum(fare_swipe)/1e6, 1)) 
     })
     
     g_sum_station = reactive({ df %>% filter(!year %in% c(2010, 2017)) %>% filter(Station == input$station) %>%
-            group_by_(input$period) %>% dplyr::summarise(swipe_count = sum(fare_swipe)/1e6)
+            group_by_(input$period) %>% dplyr::summarise(swipe_count = round(sum(fare_swipe)/1e6,1))
     })
     
     
     g_sum_type = reactive({ df %>% filter(!year %in% c(2010, 2017)) %>% filter(fare_type == input$fare_type) %>%
-            group_by_(input$period) %>% dplyr::summarise(swipe_count = sum(fare_swipe)/1e6)
+            group_by_(input$period) %>% dplyr::summarise(swipe_count = round(sum(fare_swipe)/1e6,1))
     })
     
     #      Now let's look at different station ----- only count the sum of fare swipe  ---------------
     
     g_sum_type_station = reactive({ df %>% filter(!year %in% c(2010, 2017)) %>% 
             filter(fare_type == input$fare_type) %>% filter(Station == input$station) %>% 
-            group_by_(input$period) %>% dplyr::summarise(swipe_count = sum(fare_swipe)/1e6)
+            group_by_(input$period) %>% dplyr::summarise(swipe_count = round(sum(fare_swipe)/1e6, 1))
     })
     
 #---------- ggv2
@@ -145,7 +149,7 @@ function(input, output) {
                             height= 300,
                             legend='none',
                             title="Total MTA Fare Card Swipe Number", 
-                            vAxis="{title:'Count (Million)'}"
+                            vAxis="{title:'Count (Million)', minValue:0, maxValue: 'auto' }"
                             
                         ))
         
@@ -159,7 +163,7 @@ function(input, output) {
                             height= 300,
                             legend='none',
                             title= input$station , 
-                            vAxis="{title:'Count (Million)'}" ) )#,
+                            vAxis="{title:'Count (Million)', minValue: 0, maxValue: 'auto' }" ) )#,
                             #hAxis="{title: input$period }")
     
     }) 
@@ -172,7 +176,7 @@ function(input, output) {
                             height= 300,
                             legend='none',
                             title= input$fare_type, 
-                            vAxis="{title:'Count (Million)'}" ) ) # ,
+                            vAxis="{title:'Count (Million)', minValue:0, maxValue: 'auto' }" ) ) # ,
                             #hAxis="{title:'height (in)'}"))
         
     }) 
@@ -185,8 +189,8 @@ function(input, output) {
                         options=list(
                             height= 300,
                             legend='none',
-                            title="Total Swipe Count By Each Fare Type in Each Station", 
-                            vAxis="{title:'Count (Million)'}" ) ) # ,
+                            title="Total Swipe Count Using Selected Fare Type in Selected Station", 
+                            vAxis="{title:'Count (Million)', minValue:0, maxValue: 'auto' }" ) ) # ,
                             #hAxis="{title:'height (in)'}"))
         
     }) 
@@ -217,18 +221,18 @@ function(input, output) {
     g_timeline_type = reactive({ df %>%  
             filter(fare_type == input$fare_type) %>%
             group_by(To.Date) %>% 
-            dplyr::summarise(swipe_count = sum(fare_swipe))
+            dplyr::summarise(swipe_count = round(sum(fare_swipe)/1e6,1))
     })
     
     g_timeline_station = reactive({ df %>%  
             filter(Station == input$station) %>%
             group_by(To.Date) %>% 
-            dplyr::summarise(swipe_count = sum(fare_swipe))
+            dplyr::summarise(swipe_count = round(sum(fare_swipe)/1e6,1))
     })
     
     g_timeline_none = reactive({ df %>%  
             group_by(To.Date) %>% 
-            dplyr::summarise(swipe_count = sum(fare_swipe))
+            dplyr::summarise(swipe_count = round(sum(fare_swipe)/1e6,1))
     })
 
     
@@ -291,8 +295,8 @@ function(input, output) {
         }) 
     
     output$timeline_total_swipe1 <- renderValueBox({
-        valueBox( value = tags$p(g_timeline_both()$swipe_count, style = "font-size: 60%;"), 
-                  subtitle = tags$p("Total Swipe Count (Million)",  style = "font-size: 150%;"),
+        valueBox( value = tags$p(round(g_timeline_both()$swipe_count/6,0), style = "font-size: 60%;"), 
+                  subtitle = tags$p("Annual Swipe Count",  style = "font-size: 150%;"),
                   icon = icon("star"))
     }) 
     
@@ -311,8 +315,8 @@ function(input, output) {
     }) 
     
     output$timeline_total_swipe2 <- renderValueBox({
-        valueBox( value = tags$p(g_timeline_both()$swipe_count, style = "font-size: 60%;"), 
-                  subtitle = tags$p("Total Swipe Count (Million)",  style = "font-size: 150%;"),
+        valueBox( value = tags$p(round(g_timeline_both()$swipe_count/6,0), style = "font-size: 60%;"), 
+                  subtitle = tags$p("Annual Swipe Count",  style = "font-size: 150%;"),
                   icon = icon("star"))
     }) 
     

@@ -36,8 +36,8 @@ dashboardSidebar(
             #3 time line chart
             tags$hr(style="border-color: black;"),
             menuItem("Timeline of Fare Swipe (weekly)", tabName = "timeline", icon = icon("line-chart")),
-            checkboxInput(inputId="station_timeline", "Chooe Station" , FALSE),
-            checkboxInput(inputId = "type_timeline", "Choose Fare Type",  FALSE),
+            checkboxInput(inputId="station_timeline", "Select Station With Filter" , FALSE),
+            checkboxInput(inputId = "type_timeline", "Select Fare Type With Filter",  FALSE),
 
 
             #4 Raw data table
