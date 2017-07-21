@@ -16,7 +16,7 @@ load('./mta2011_gathered.Rda')
 # create variable with colnames as choice
 
 # time period
-periods = list("year", "month")
+periods = list("year") #, "month")
 
 units = list("count", "percentile")
 

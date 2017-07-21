@@ -119,24 +119,24 @@ function(input, output) {
     #      Now let's look at different fare type ----------------
     #      only count the sum of fare swipe  ---------------
     
-    g_sum2 = reactive({  df %>% filter(!year %in% c(2010, 2017)) %>% group_by_(input$period) %>%    
+    g_sum2 = reactive({  df %>% group_by_(input$period) %>%    
             dplyr::summarise(swipe_count = round(sum(fare_swipe)/1e6, 1)) 
     })
     
-    g_sum_station = reactive({ df %>% filter(!year %in% c(2010, 2017)) %>% filter(Station == input$station) %>%
+    g_sum_station = reactive({ df %>% filter(Station == input$station) %>%
             group_by_(input$period) %>% dplyr::summarise(swipe_count = round(sum(fare_swipe)/1e6,1))
     })
     
     
-    g_sum_type = reactive({ df %>% filter(!year %in% c(2010, 2017)) %>% filter(fare_type == input$fare_type) %>%
+    g_sum_type = reactive({ df %>% filter(fare_type == input$fare_type) %>%
             group_by_(input$period) %>% dplyr::summarise(swipe_count = round(sum(fare_swipe)/1e6,1))
     })
     
     #      Now let's look at different station ----- only count the sum of fare swipe  ---------------
     
-    g_sum_type_station = reactive({ df %>% filter(!year %in% c(2010, 2017)) %>% 
+    g_sum_type_station = reactive({ df %>% 
             filter(fare_type == input$fare_type) %>% filter(Station == input$station) %>% 
-            group_by_(input$period) %>% dplyr::summarise(swipe_count = round(sum(fare_swipe)/1e6, 1))
+            group_by_(input$period) %>% dplyr::summarise(swipe_count = sum(fare_swipe))
     })
     
 #---------- ggv2
@@ -190,7 +190,7 @@ function(input, output) {
                             height= 300,
                             legend='none',
                             title="Total Swipe Count Using Selected Fare Type in Selected Station", 
-                            vAxis="{title:'Count (Million)', minValue:0, maxValue: 'auto' }" ) ) # ,
+                            vAxis="{title:'Count', minValue:0, maxValue: 'auto' }" ) ) # ,
                             #hAxis="{title:'height (in)'}"))
         
     }) 
@@ -221,18 +221,18 @@ function(input, output) {
     g_timeline_type = reactive({ df %>%  
             filter(fare_type == input$fare_type) %>%
             group_by(To.Date) %>% 
-            dplyr::summarise(swipe_count = round(sum(fare_swipe)/1e6,1))
+            dplyr::summarise(swipe_count = sum(fare_swipe))
     })
     
     g_timeline_station = reactive({ df %>%  
             filter(Station == input$station) %>%
             group_by(To.Date) %>% 
-            dplyr::summarise(swipe_count = round(sum(fare_swipe)/1e6,1))
+            dplyr::summarise(swipe_count = sum(fare_swipe))
     })
     
     g_timeline_none = reactive({ df %>%  
             group_by(To.Date) %>% 
-            dplyr::summarise(swipe_count = round(sum(fare_swipe)/1e6,1))
+            dplyr::summarise(swipe_count = sum(fare_swipe))
     })
 
     
@@ -259,21 +259,21 @@ function(input, output) {
 #----------valueBox------------------------------------------------
     
     output$overview_total_swipe <- renderValueBox({
-        valueBox( value = tags$p(round(g_sum()$swipe_count %>% mean()/1e3, 1) , style = "font-size: 60%;"), 
+        valueBox( value = tags$p(round(g_sum()$swipe_count %>% mean()/1e3,1) , style = "font-size: 60%;"), 
                   subtitle = tags$p("2010 ~2016 MTA Annual Fare Swipes (billiion) ", style = "font-size: 150%;"), 
-                  icon = icon("star"))
+                  icon = icon("plus"))
     }) 
     
     output$overview_top_station <- renderValueBox({
         valueBox(value = tags$p(stations, style = "font-size: 60%;"), 
                  subtitle = tags$p("Subway Stations",  style = "font-size: 150%;"),
-                 icon = icon("star"))
+                 icon = icon("arrow-right"))
     }) 
     
     output$overview_top_fare_type <- renderValueBox({
         valueBox( value = tags$p(fare_types, style = "font-size: 60%;"), 
                   subtitle = tags$p("Active Fare Types",  style = "font-size: 150%;"),
-                  icon = icon("star"))
+                  icon = icon("calculator"))
     })   
     
     
@@ -285,19 +285,19 @@ function(input, output) {
     output$timeline_station1 <- renderValueBox({
          valueBox( value = tags$p(input$station, style = "font-size: 60%;"), 
                    subtitle = tags$p("Station", style = "font-size: 150%;"), 
-                   icon = icon("star"))
+                   icon = icon("plus"))
         }) 
     
     output$timeline_fare_type1 <- renderValueBox({
         valueBox(value = tags$p(input$fare_type, style = "font-size: 60%;"), 
                   subtitle = tags$p("Fare Type",  style = "font-size: 150%;"),
-                  icon = icon("star"))
+                  icon = icon("arrow-right"))
         }) 
     
     output$timeline_total_swipe1 <- renderValueBox({
-        valueBox( value = tags$p(round(g_timeline_both()$swipe_count/6,0), style = "font-size: 60%;"), 
-                  subtitle = tags$p("Annual Swipe Count",  style = "font-size: 150%;"),
-                  icon = icon("star"))
+        valueBox( value = tags$p(round(mean(g_sum_type_station()$swipe_count),0), style = "font-size: 60%;"), 
+                  subtitle = tags$p(  'Average Annual Count' ,  style = "font-size: 150%;"),
+                  icon = icon("calculator"))
     }) 
     
  #------------------------   
@@ -305,19 +305,19 @@ function(input, output) {
     output$timeline_station2 <- renderValueBox({
         valueBox( value = tags$p(input$station, style = "font-size: 60%;"), 
                   subtitle = tags$p("Station", style = "font-size: 150%;"), 
-                  icon = icon("star"))
+                  icon = icon("plus"))
     }) 
     
     output$timeline_fare_type2 <- renderValueBox({
         valueBox(value = tags$p(input$fare_type, style = "font-size: 60%;"), 
                  subtitle = tags$p("Fare Type",  style = "font-size: 150%;"),
-                 icon = icon("star"))
+                 icon = icon("arrow-right"))
     }) 
     
     output$timeline_total_swipe2 <- renderValueBox({
-        valueBox( value = tags$p(round(g_timeline_both()$swipe_count/6,0), style = "font-size: 60%;"), 
-                  subtitle = tags$p("Annual Swipe Count",  style = "font-size: 150%;"),
-                  icon = icon("star"))
+        valueBox( value = tags$p(round(mean(g_timeline_both()$swipe_count), 0), style = "font-size: 60%;"), 
+                  subtitle = tags$p("Average Weekly Count",  style = "font-size: 150%;"),
+                  icon = icon("calculator"))
     }) 
     
 
