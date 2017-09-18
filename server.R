@@ -293,7 +293,7 @@ function(input, output) {
     
     output$timeline_total_swipe1 <- renderValueBox({
         valueBox( value = tags$p(g_timeline_both()$swipe_count, style = "font-size: 60%;"), 
-                  subtitle = tags$p("Total Swipe Count (Daily Average)",  style = "font-size: 150%;"),
+                  subtitle = tags$p("Swipe Count (Daily Average)",  style = "font-size: 150%;"),
                   icon = icon("star"))
     }) 
     
@@ -313,7 +313,7 @@ function(input, output) {
     
     output$timeline_total_swipe2 <- renderValueBox({
         valueBox( value = tags$p(g_timeline_both()$swipe_count, style = "font-size: 60%;"), 
-                  subtitle = tags$p("Total Swipe Count (Daily Average)",  style = "font-size: 150%;"),
+                  subtitle = tags$p("Swipe Count (Daily Average)",  style = "font-size: 150%;"),
                   icon = icon("star"))
     }) 
     
