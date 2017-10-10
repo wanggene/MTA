@@ -13,7 +13,8 @@ dashboardHeader(title = "MTA Fare Card History",
 dashboardSidebar(
     sidebarUserPanel(h4("NYC DSA"),
     image = "https://yt3.ggpht.com/-04uuTMHfDz4/AAAAAAAAAAI/AAAAAAAAAAA/Kjeupp-eNNg/s100-c-k-no-rj-c0xffffff/photo.jpg"),
-    width = 300,
+    width = 300, 
+    
     sidebarMenu(
            
             #1 Total count trend by period, group by period, count is the sum and mean
@@ -42,7 +43,13 @@ dashboardSidebar(
 
             #4 Raw data table
             tags$hr(style="border-color: black;"),
-            menuItem("Explore Raw Data", tabName = "data", icon = icon("database")) #5
+            menuItem("Explore Raw Data", tabName = "data", icon = icon("database"))  #, #5
+            
+            
+            
+
+            
+            
 
     )
 

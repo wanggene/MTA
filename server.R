@@ -18,7 +18,7 @@ function(input, output) {
     
     ################--------------ggv1_mean : average swipe count in each time period 
     g_mean = reactive({ df %>% group_by(month) %>% 
-            dplyr::summarise(swipe_count = mean(fare_swipe))
+            dplyr::summarise(swipe_count = sum(fare_swipe)/6e6)
         })
     
     ############# ---------------ggv1_top station: find the top station in the year
@@ -57,7 +57,7 @@ function(input, output) {
                             #width = 4,
                             height= 300,
                             legend='none',
-                            title="Total MTA Fare Card Swipe Number",
+                            title="Annual Total MTA Subway Fare Card Swipe Number",
                             vAxis="{title:'Count (Million)'}",
                             hAxis="{title:'Year'}"
                             ))
@@ -74,8 +74,8 @@ function(input, output) {
                             #width = 4,
                             height= 300,
                             legend='none',
-                            title="Avearage MTA Fare Card Swipe Number", 
-                            vAxis="{title:'Count'}",
+                            title="Monthly Avearage MTA Subway Fare Card Swipe Number", 
+                            vAxis="{title:'Count (Million)'}",
                             hAxis="{title:'Month'}"
                         ))
     }) 
@@ -105,7 +105,7 @@ function(input, output) {
                          height= 300,
                          #width = 4,
                          legend='none',
-                         title="Most Commen MTA Subway Fare Type",
+                         title="Most Popular MTA Subway Fare Types",
                          hAxis="{title:'Count (Billion)'}",
                          vAxis="{title:'Fare Type'}"
                      ))
